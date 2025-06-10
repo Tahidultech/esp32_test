@@ -3,12 +3,10 @@
 #include "WiFiProv.h"
 #include <Preferences.h>       // Use Preferences instead of EEPROM (NVS storage)
 #include <ezButton.h>
-#include <IRremote.hpp>        // v4.x+ of IRremote
 
 //---------------------------------------------------
-const char *service_name = "Ahmad_Logs";
+const char *service_name = "Prov_Tahidul";
 const char *pop = "12345678";
-const byte IR_RECEIVE_PIN = 14;
 
 //---------------------------------------------------
 // Device Names
@@ -123,8 +121,7 @@ void setup(){
     // Preferences (NVS) - no need to define size
     preferences.begin("relays", false);
 
-    // IRremote v4.x+ initialization
-    IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+
 
     // Set the Relays GPIOs as output mode
     pinMode(RELAY_1, OUTPUT);
@@ -234,7 +231,6 @@ void loop()
     }
 
     button_control();
-    remote_control();
 }
 
 /*******************************************************************************
@@ -282,33 +278,3 @@ void control_relay(int relay_no, int relay_pin, boolean &status){
     Serial.println("Relay"+String(relay_no)+" is "+text);
 }
 
-/****************************************************************************************************
- * remote_control Function
-*****************************************************************************************************/
-void remote_control()
-{
-    if (IrReceiver.decode()) {
-        String ir_code = String(IrReceiver.decodedIRData.command, HEX);
-        if(ir_code.equals("0")) {IrReceiver.resume();return; }
-
-        Serial.println(ir_code);
-
-        if(ir_code == "c"){
-            control_relay(1, RELAY_1, STATE_RELAY_1);
-            my_switch1.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, STATE_RELAY_1);
-        }
-        else if(ir_code == "18"){
-            control_relay(2, RELAY_2, STATE_RELAY_2);
-            my_switch2.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, STATE_RELAY_2);
-        }
-        else if(ir_code == "5e"){
-            control_relay(3, RELAY_3, STATE_RELAY_3);
-            my_switch3.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, STATE_RELAY_3);
-        }
-        else if(ir_code == "8"){
-            control_relay(4, RELAY_4, STATE_RELAY_4);
-            my_switch4.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, STATE_RELAY_4);
-        }
-        IrReceiver.resume();
-    }
-}

@@ -1,4 +1,3 @@
-
 #include "RMaker.h"
 #include "WiFi.h"
 #include "WiFiProv.h"
@@ -6,7 +5,7 @@
 //---------------------------------------------------
 //install these libraries
 #include <ezButton.h>
-#include <IRremote.h>
+#include <IRremote.hpp> // CHANGED: IRremote.h → IRremote.hpp for v4.x+
 //---------------------------------------------------
 const char *service_name = "Ahmad_Logs";
 const char *pop = "12345678";
@@ -148,7 +147,7 @@ void setup(){
   // initialize EEPROM with predefined size
   EEPROM.begin(EEPROM_SIZE);
   //------------------------------------------------------------------------------
-  IrReceiver.begin(IR_RECEIVE_PIN); // Start the IR receiver
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK); // CHANGED: Add ENABLE_LED_FEEDBACK for IRremote v4.x+
   //------------------------------------------------------------------------------
   // Set the Relays GPIOs as output mode
   pinMode(RELAY_1, OUTPUT);

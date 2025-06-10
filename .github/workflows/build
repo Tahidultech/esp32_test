@@ -1,0 +1,32 @@
+name: ESP32 Build (Arduino 2.0.3)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Arduino CLI
+      uses: arduino/setup-arduino-cli@v1
+      with:
+        version: 'latest'
+
+    - name: Install ESP32 2.0.3 core
+      run: |
+        arduino-cli core update-index
+        arduino-cli core install esp32:esp32@2.0.3
+
+    - name: Compile all sketches
+      run: |
+        for sketch in $(find . -name esp32_test.ino); do
+          echo "Compiling $sketch"
+          arduino-cli compile --fqbn esp32:esp32:esp32 $sketch
+        done
